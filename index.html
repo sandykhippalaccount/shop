@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shop</title>
+<style>
+:root{--ink:#172033;--mut:#5b667a;--line:#e3e7ee;--bg:#f3f5f8;--card:#fff;--brand:#0e6b57;--gold:#b7791f;--bad:#b42318;--good:#14653f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Georgia,"Times New Roman",serif}
+button,input,select{font:15px/1.3 Arial,Helvetica,sans-serif}
+.w{max-width:1000px;margin:0 auto;padding:0 16px}
+header{background:var(--card);border-bottom:1px solid var(--line)}
+header .w{display:flex;justify-content:space-between;align-items:center;height:60px}
+h1{font-size:21px;margin:0;cursor:pointer}
+button{cursor:pointer;border:1px solid #b9c1cf;background:#fff;border-radius:8px;padding:0 14px;height:38px}
+button.p{background:var(--brand);border-color:var(--brand);color:#fff}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+input,select{width:100%;height:40px;border:1px solid #b9c1cf;border-radius:8px;padding:0 10px;background:#fff}
+input[type=checkbox]{width:18px;height:18px;margin-top:3px;flex:none}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 10px}
+.bar input{flex:1;min-width:200px}.bar select{width:190px}
+.tabs,.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chip{height:32px;border-radius:999px;font-size:13px;padding:0 12px;color:var(--mut)}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin:12px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column}
+.sq{width:100%;aspect-ratio:1/1;border-radius:8px;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.sq img{width:100%;height:100%;object-fit:cover;display:block}
+.sq b{font-size:56px}
+.tag{position:absolute;top:8px;left:8px;font:12px Arial;padding:2px 9px;border-radius:999px;background:#fff;color:var(--ink)}
+.tag.n{background:#dcfce7;color:var(--good);top:8px;left:auto;right:8px}.tag.b{background:#fef3c7;color:var(--gold);top:34px;left:auto;right:8px}
+.card h3{font-size:16px;margin:10px 0 2px;line-height:1.3;cursor:pointer}
+.mu{font:13px Arial;color:var(--mut)}
+.row{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px}
+.row strong{font:600 18px Arial}
+.pg{display:flex;gap:6px;justify-content:center;margin:8px 0 20px}.pg button{min-width:38px;padding:0 8px}.pg .on{background:var(--ink);color:#fff}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:16px 0}
+.det{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
+.ln{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line);font:15px Arial}.ln:first-child{border-top:0}
+.ln button{height:28px;border:0;color:var(--bad)}
+label.l{display:block;font:13px Arial;color:var(--mut);margin:10px 0 4px}
+.ck{display:flex;gap:10px;font:14px Arial;margin-top:10px;align-items:flex-start}
+.ck a{color:var(--brand)}
+.sum{display:flex;justify-content:space-between;font:15px Arial;padding:3px 0}
+.err{color:var(--bad);font:13px Arial;margin-top:4px}.ok{color:var(--good);font:13px Arial;margin-top:4px}
+.warn{background:#fff7e0;color:#7a4b00;font:13px Arial;padding:8px 10px;border-radius:8px;margin-top:6px}
+#msg{display:none;padding:12px 14px;border-radius:8px;margin:12px 0;font:15px Arial}
+#msg.ok2{display:block;background:#e6f6ea;color:#14532d}#msg.er2{display:block;background:#fde8e8;color:#7f1d1d}#msg.in2{display:block;background:#eaf0ff;color:#1e3a8a}
+.hp{position:absolute;left:-9999px;height:0;overflow:hidden}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+footer{padding:20px 0 40px;font:13px Arial;color:var(--mut);text-align:center}footer a{color:var(--brand);margin:0 8px}
+</style>
+</head>
+<body>
+<header><div class="w"><h1 id="brand"></h1><button id="cartBtn">Cart <b id="cn">0</b></button></div></header>
+<main class="w">
+  <div id="msg" role="status" aria-live="polite"></div>
+  <div id="list">
+    <div class="bar"><input id="q" type="search" placeholder="Search titles and topics" aria-label="Search"><select id="sort" aria-label="Sort"><option value="feat">Featured</option><option value="new">Newest</option><option value="lo">Price: low to high</option><option value="hi">Price: high to low</option><option value="az">A to Z</option></select></div>
+    <div class="tabs" id="tabs"></div><div class="chips" id="chips"></div>
+    <div class="mu" id="count"></div>
+    <div class="grid" id="grid">Loading titles...</div>
+    <div class="pg" id="pg"></div>
+  </div>
+  <div id="detail" hidden></div>
+ 
+  <section class="box" id="cart">
+    <h2 style="margin:0 0 8px;font-size:20px">Your cart</h2>
+    <div id="lines"><span class="mu">Your cart is empty. Add a title to get started.</span></div>
+    <div id="buy" hidden>
+      <label class="l" for="coupon">Coupon code</label>
+      <div style="display:flex;gap:8px"><input id="coupon" placeholder="SAVE15"><button id="apply">Apply</button></div>
+      <div id="cmsg"></div>
+      <div id="tot" style="margin-top:12px"></div>
+      <div class="two">
+        <div><label class="l" for="name">Full name *</label><input id="name" autocomplete="name"></div>
+        <div><label class="l" for="city">City *</label><input id="city" autocomplete="address-level2"></div>
+        <div><label class="l" for="email">Email address *</label><input id="email" type="email" autocomplete="email"><div id="sug"></div></div>
+        <div><label class="l" for="email2">Confirm email address *</label><input id="email2" type="email" autocomplete="off"></div>
+      </div>
+      <div class="hp" aria-hidden="true"><label>Website<input id="website" tabindex="-1" autocomplete="off"></label></div>
+      <label class="ck"><input type="checkbox" id="terms"><span>I agree to the <a id="lt" target="_blank" rel="noopener">Terms and conditions</a> and the <a id="lr" target="_blank" rel="noopener">Refund policy</a> *</span></label>
+      <label class="ck"><input type="checkbox" id="news"><span>Send me new products and offers every two weeks. Unsubscribe anytime.</span></label>
+      <button class="p" id="pay" style="width:100%;height:46px;margin-top:14px;font-size:16px">Pay</button>
+      <div id="perr"></div>
+      <p class="mu" style="text-align:center;margin:8px 0 0">UPI, cards, and netbanking. Secured by Razorpay.</p>
+    </div>
+  </section>
+ 
+  <section class="two">
+    <div class="box" style="margin:0"><h3 style="margin:0 0 4px">Lost your files?</h3><p class="mu" style="margin:0">Enter the email and order ID from your payment receipt.</p>
+      <label class="l" for="rs_e">Email address</label><input id="rs_e" type="email"><label class="l" for="rs_o">Order ID</label><input id="rs_o" placeholder="order_..."><button id="rs_b" style="width:100%;margin-top:10px">Send my files again</button><div id="rs_m"></div></div>
+    <div class="box" style="margin:0"><h3 style="margin:0 0 4px">Get new titles and offers</h3><p class="mu" style="margin:0">One email every two weeks. Unsubscribe anytime.</p>
+      <label class="l" for="sb_e">Email address</label><input id="sb_e" type="email"><div class="hp" aria-hidden="true"><input id="sb_t" tabindex="-1" autocomplete="off"></div><button id="sb_b" style="width:100%;margin-top:10px">Subscribe</button><div id="sb_m"></div></div>
+  </section>
+</main>
+<footer><div class="w"><a id="fa" target="_blank" rel="noopener">Terms</a><a id="fb" target="_blank" rel="noopener">Refund policy</a><a id="fc" target="_blank" rel="noopener">Privacy policy</a><div style="margin-top:8px" id="fd"></div></div></footer>
+ 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+const CONFIG = {
+  API_URL: "https://script.google.com/macros/s/AKfycbxY57PgUHSbAhsy-RyQ0M4kXhVDAJ33XwAjoZgFwS2FYVml5v-hzcxjl6D_Bz6sjDAiNg/exec",
+  SHOP_NAME: "Curious Minds Shop",
+  SUPPORT_EMAIL: "info@sandykhippal.com",
+  TERMS_URL: "https://www.sandykhippal.com/terms",
+  REFUND_URL: "https://www.sandykhippal.com/refund-policy",
+  PRIVACY_URL: "https://www.sandykhippal.com/privacy"
+};
+const $ = id => document.getElementById(id);
+const S = { all: [], q: '', type: 'all', cat: '', sort: 'feat', page: 1, cart: [], coupon: '', quote: null, keyId: '', busy: false };
+const PER = 12;
+const TYPOS = { 'gmial.com': 'gmail.com', 'gmai.com': 'gmail.com', 'gamil.com': 'gmail.com', 'gmail.con': 'gmail.com', 'hotmial.com': 'hotmail.com', 'yahooo.com': 'yahoo.com', 'outlok.com': 'outlook.com' };
+const inr = v => '\u20B9' + Number(v).toLocaleString('en-IN', { maximumFractionDigits: 2 });
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const hue = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
+ 
+async function api(fn, args) {
+  const r = await fetch(CONFIG.API_URL, { method: 'POST', body: JSON.stringify({ fn: fn, args: args }) });
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.error);
+  return j.data;
+}
+function note(t, cls) { const m = $('msg'); m.textContent = t; m.className = cls || ''; if (t) m.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+const byId = id => S.all.find(p => p.id === id);
+ 
+function tile(p) {
+  const h = hue(p.category), tags = (p.isNew ? '<span class="tag n">New</span>' : '') + (p.best ? '<span class="tag b">Bestseller</span>' : '');
+  const art = p.cover ? '<img loading="lazy" alt="" src="' + esc(p.cover) + '">' : '<b style="color:hsl(' + h + ' 45% 30%)">' + esc(p.name.charAt(0).toUpperCase()) + '</b>';
+  return '<div class="sq" data-open="' + esc(p.id) + '" style="background:hsl(' + h + ' 55% 91%)">' + art + '<span class="tag">' + (p.type === 'bundle' ? 'Bundle' : 'PDF') + '</span>' + tags + '</div>';
+}
+const addBtn = p => '<button data-add="' + esc(p.id) + '" class="' + (S.cart.includes(p.id) ? '' : 'p') + '">' + (S.cart.includes(p.id) ? 'In cart' : 'Add to cart') + '</button>';
+ 
+function view() {
+  const q = S.q.trim().toLowerCase();
+  let r = S.all.filter(p => (S.type === 'all' || p.type === S.type) && (!S.cat || p.category === S.cat) &&
+    (!q || (p.name + ' ' + p.category + ' ' + p.description).toLowerCase().includes(q)));
+  if (S.sort === 'lo') r.sort((a, b) => a.price - b.price);
+  else if (S.sort === 'hi') r.sort((a, b) => b.price - a.price);
+  else if (S.sort === 'az') r.sort((a, b) => a.name.localeCompare(b.name));
+  else if (S.sort === 'new') r = r.slice().reverse();
+  return r;
+}
+function renderList() {
+  const tabs = [['all', 'All'], ['single', 'Ebooks'], ['bundle', 'Bundles']];
+  $('tabs').innerHTML = tabs.map(t => '<button class="chip ' + (S.type === t[0] ? 'on' : '') + '" data-type="' + t[0] + '">' + t[1] + '</button>').join('');
+  const cats = {}; S.all.filter(p => S.type === 'all' || p.type === S.type).forEach(p => cats[p.category] = (cats[p.category] || 0) + 1);
+  $('chips').innerHTML = '<button class="chip ' + (!S.cat ? 'on' : '') + '" data-cat="">All topics</button>' +
+    Object.keys(cats).sort().map(c => '<button class="chip ' + (S.cat === c ? 'on' : '') + '" data-cat="' + esc(c) + '">' + esc(c) + ' ' + cats[c] + '</button>').join('');
+  const r = view(), pages = Math.max(1, Math.ceil(r.length / PER));
+  if (S.page > pages) S.page = pages;
+  $('count').textContent = r.length + ' result' + (r.length === 1 ? '' : 's');
+  $('grid').innerHTML = r.length ? r.slice((S.page - 1) * PER, S.page * PER).map(p =>
+    '<div class="card">' + tile(p) + '<h3 data-open="' + esc(p.id) + '">' + esc(p.name) + '</h3><div class="mu">' + esc(p.category) + (p.pages ? ' | ' + esc(p.pages) : '') +
+    '</div><div class="row"><strong>' + inr(p.price) + '</strong>' + addBtn(p) + '</div></div>').join('')
+    : '<div class="mu">No matches. Try another word or clear the filters.</div>';
+  let pg = '';
+  if (pages > 1) { const a = Math.max(1, Math.min(S.page - 2, pages - 4)); for (let i = a; i <= Math.min(pages, a + 4); i++) pg += '<button data-page="' + i + '" class="' + (i === S.page ? 'on' : '') + '">' + i + '</button>'; }
+  $('pg').innerHTML = pg;
+}
+function renderDetail(p) {
+  const link = location.origin + location.pathname + '#p=' + p.id;
+  $('detail').innerHTML = '<p><button data-back="1">Back to all titles</button></p><div class="det"><div>' + tile(p) + '</div><div>' +
+    '<div class="mu">' + esc(p.category) + (p.pages ? ' | ' + esc(p.pages) : '') + '</div><h2 style="font-size:26px;margin:6px 0">' + esc(p.name) + '</h2>' +
+    '<p>' + esc(p.description || 'Printable PDF, delivered to your email.') + '</p><p style="font:600 28px Arial;margin:8px 0">' + inr(p.price) + '</p>' + addBtn(p) +
+    '<div style="margin-top:16px"><button data-copy="' + esc(link) + '">Copy link</button> <a href="https://wa.me/?text=' + encodeURIComponent(p.name + ' ' + link) + '" target="_blank" rel="noopener"><button>Share on WhatsApp</button></a></div></div></div>';
+}
+function route() {
+  const m = location.hash.match(/^#p=(.+)$/), p = m && byId(decodeURIComponent(m[1]));
+  $('list').hidden = !!p; $('detail').hidden = !p;
+  if (p) { renderDetail(p); window.scrollTo(0, 0); } else renderList();
+}
+ 
+function est() {
+  const items = S.cart.map(byId).filter(Boolean), sub = items.reduce((s, p) => s + p.price, 0);
+  const pct = items.length >= S.minItems ? S.percent : 0, off = Math.round(sub * pct) / 100;
+  return { subtotal: sub, discount: off, total: sub - off };
+}
+function renderCart() {
+  $('cn').textContent = S.cart.length;
+  const items = S.cart.map(byId).filter(Boolean);
+  $('buy').hidden = !items.length;
+  $('lines').innerHTML = items.length ? items.map(p => '<div class="ln"><span>' + esc(p.name) + '</span><span>' + inr(p.price) + ' <button data-rm="' + esc(p.id) + '" aria-label="Remove">Remove</button></span></div>').join('')
+    : '<span class="mu">Your cart is empty. Add a title to get started.</span>';
+  const q = S.quote || est();
+  $('tot').innerHTML = '<div class="sum"><span>Subtotal</span><span>' + inr(q.subtotal) + '</span></div>' +
+    (q.discount ? '<div class="sum"><span>Discount</span><span style="color:var(--good)">-' + inr(q.discount) + '</span></div>' : '') +
+    (items.length && items.length < S.minItems ? '<div class="mu">Add ' + (S.minItems - items.length) + ' more title' + (S.minItems - items.length > 1 ? 's' : '') + ' to save ' + S.percent + '%</div>' : '') +
+    '<div class="sum" style="font-weight:700;font-size:18px"><span>Total</span><span>' + inr(q.total) + '</span></div>';
+  $('pay').textContent = 'Pay ' + inr(q.total);
+}
+async function refreshQuote() {
+  S.quote = null;
+  if (S.cart.length) { try { const q = await api('quote', [S.cart, S.coupon]); S.quote = q; if (S.coupon) { $('cmsg').innerHTML = '<div class="' + (q.coupon ? 'ok' : 'err') + '">' + esc(q.message) + '</div>'; if (!q.coupon) S.coupon = ''; } } catch (e) { S.quote = null; } }
+  renderCart();
+}
+function toggle(id) { const i = S.cart.indexOf(id); if (i > -1) S.cart.splice(i, 1); else S.cart.push(id); renderCart(); route(); refreshQuote(); }
+ 
+function suggest() {
+  const v = $('email').value.trim().toLowerCase(), d = v.split('@')[1], fix = d && TYPOS[d];
+  $('sug').innerHTML = fix ? '<div class="warn">Did you mean ' + esc(v.split('@')[0] + '@' + fix) + '? <button data-fix="' + esc(v.split('@')[0] + '@' + fix) + '" style="height:26px;font-size:12px">Yes, fix it</button></div>' : '';
+}
+function pErr(t) { $('perr').innerHTML = t ? '<div class="err">' + esc(t) + '</div>' : ''; }
+ 
+async function pay() {
+  if (S.busy) return;
+  const f = { name: $('name').value.trim(), city: $('city').value.trim(), email: $('email').value.trim().toLowerCase(), email2: $('email2').value.trim().toLowerCase() };
+  if (f.name.length < 2) return pErr('Enter your name.');
+  if (f.city.length < 2) return pErr('Enter your city.');
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email)) return pErr('Enter a valid email address.');
+  if (TYPOS[f.email.split('@')[1]]) return pErr('Check your email address. It may have a typo.');
+  if (f.email !== f.email2) return pErr('The two email addresses do not match.');
+  if (!$('terms').checked) return pErr('Tick the box to accept the Terms and Refund policy.');
+  pErr(''); S.busy = true; $('pay').disabled = true; note('Preparing your order...', 'in2');
+  try {
+    const o = await api('createOrder', [{ ids: S.cart, name: f.name, city: f.city, email: f.email, coupon: S.coupon, newsletter: $('news').checked, terms: true, trap: $('website').value }]);
+    const rz = new Razorpay({
+      key: S.keyId, amount: o.amount, currency: 'INR', order_id: o.orderId, name: CONFIG.SHOP_NAME, description: o.label,
+      prefill: { name: f.name, email: f.email },
+      handler: async r => {
+        note('Payment received. Sending your files...', 'in2');
+        try {
+          const st = await api('verifyPayment', [r.razorpay_order_id, r.razorpay_payment_id, r.razorpay_signature]);
+          if (st === 'delivered') { S.cart = []; S.quote = null; S.coupon = ''; $('cmsg').innerHTML = ''; renderCart(); route(); note('Payment successful. Check ' + f.email + ' (and your spam folder) for your files. Order ID: ' + o.orderId, 'ok2'); }
+          else note('Payment received, but delivery needs a check. Contact ' + CONFIG.SUPPORT_EMAIL + ' with order ID ' + o.orderId + '.', 'er2');
+        } catch (e) { note('Payment received, but we could not confirm delivery. Order ID: ' + o.orderId + '. Your files will follow by email.', 'er2'); }
+        S.busy = false; $('pay').disabled = false;
+      },
+      modal: { ondismiss: () => { S.busy = false; $('pay').disabled = false; note('Payment cancelled. Your cart is still here.', 'in2'); } }
+    });
+    rz.on('payment.failed', r => { S.busy = false; $('pay').disabled = false; note('Payment failed: ' + ((r.error && r.error.description) || 'unknown error'), 'er2'); });
+    rz.open();
+  } catch (e) { S.busy = false; $('pay').disabled = false; note(e.message, 'er2'); }
+}
+ 
+document.addEventListener('click', async e => {
+  const t = e.target.closest('[data-add],[data-rm],[data-type],[data-cat],[data-page],[data-open],[data-back],[data-copy],[data-fix],#apply,#pay,#cartBtn,#rs_b,#sb_b,#brand');
+  if (!t) return; const d = t.dataset;
+  if (d.add) toggle(d.add);
+  else if (d.rm) toggle(d.rm);
+  else if (d.type !== undefined) { S.type = d.type; S.cat = ''; S.page = 1; renderList(); }
+  else if (d.cat !== undefined) { S.cat = d.cat; S.page = 1; renderList(); }
+  else if (d.page) { S.page = +d.page; renderList(); $('list').scrollIntoView(); }
+  else if (d.open) location.hash = '#p=' + encodeURIComponent(d.open);
+  else if (d.back || t.id === 'brand') { history.pushState('', '', location.pathname); route(); }
+  else if (d.copy) { try { await navigator.clipboard.writeText(d.copy); t.textContent = 'Link copied'; } catch (x) { prompt('Copy this link', d.copy); } }
+  else if (d.fix) { $('email').value = d.fix; $('email2').value = d.fix; suggest(); }
+  else if (t.id === 'apply') { S.coupon = $('coupon').value.trim(); await refreshQuote(); }
+  else if (t.id === 'pay') pay();
+  else if (t.id === 'cartBtn') $('cart').scrollIntoView({ behavior: 'smooth' });
+  else if (t.id === 'rs_b') { try { $('rs_m').innerHTML = '<div class="ok">' + esc(await api('resendFiles', [$('rs_e').value, $('rs_o').value])) + '</div>'; } catch (x) { $('rs_m').innerHTML = '<div class="err">' + esc(x.message) + '</div>'; } }
+  else if (t.id === 'sb_b') { try { $('sb_m').innerHTML = '<div class="ok">' + esc(await api('subscribe', [$('sb_e').value, $('sb_t').value])) + '</div>'; } catch (x) { $('sb_m').innerHTML = '<div class="err">' + esc(x.message) + '</div>'; } }
+});
+$('q').addEventListener('input', e => { S.q = e.target.value; S.page = 1; renderList(); });
+$('sort').addEventListener('change', e => { S.sort = e.target.value; S.page = 1; renderList(); });
+$('email').addEventListener('input', suggest);
+window.addEventListener('hashchange', route);
+ 
+(async function init() {
+  document.title = CONFIG.SHOP_NAME; $('brand').textContent = CONFIG.SHOP_NAME;
+  $('lt').href = $('fa').href = CONFIG.TERMS_URL; $('lr').href = $('fb').href = CONFIG.REFUND_URL; $('fc').href = CONFIG.PRIVACY_URL;
+  $('fd').textContent = CONFIG.SHOP_NAME + ' | ' + CONFIG.SUPPORT_EMAIL;
+  try {
+    const d = await api('getShopData', []);
+    S.all = d.products; S.keyId = d.keyId; S.minItems = d.minItems; S.percent = d.percent;
+    renderCart(); route();
+  } catch (e) { $('grid').textContent = 'Could not load the shop: ' + e.message; }
+})();
+</script>
+</body>
+</html>
