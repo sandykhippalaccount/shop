@@ -64,7 +64,7 @@ footer{padding:20px 0 40px;font:13px Arial;color:var(--mut);text-align:center}fo
     <div class="pg" id="pg"></div>
   </div>
   <div id="detail" hidden></div>
- 
+
   <section class="box" id="cart">
     <h2 style="margin:0 0 8px;font-size:20px">Your cart</h2>
     <div id="lines"><span class="mu">Your cart is empty. Add a title to get started.</span></div>
@@ -87,7 +87,7 @@ footer{padding:20px 0 40px;font:13px Arial;color:var(--mut);text-align:center}fo
       <p class="mu" style="text-align:center;margin:8px 0 0">UPI, cards, and netbanking. Secured by Razorpay.</p>
     </div>
   </section>
- 
+
   <section class="two">
     <div class="box" style="margin:0"><h3 style="margin:0 0 4px">Lost your files?</h3><p class="mu" style="margin:0">Enter the email and order ID from your payment receipt.</p>
       <label class="l" for="rs_e">Email address</label><input id="rs_e" type="email"><label class="l" for="rs_o">Order ID</label><input id="rs_o" placeholder="order_..."><button id="rs_b" style="width:100%;margin-top:10px">Send my files again</button><div id="rs_m"></div></div>
@@ -96,12 +96,12 @@ footer{padding:20px 0 40px;font:13px Arial;color:var(--mut);text-align:center}fo
   </section>
 </main>
 <footer><div class="w"><a id="fa" target="_blank" rel="noopener">Terms</a><a id="fb" target="_blank" rel="noopener">Refund policy</a><a id="fc" target="_blank" rel="noopener">Privacy policy</a><div style="margin-top:8px" id="fd"></div></div></footer>
- 
+
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 const CONFIG = {
-  API_URL: "https://script.google.com/macros/s/AKfycbxY57PgUHSbAhsy-RyQ0M4kXhVDAJ33XwAjoZgFwS2FYVml5v-hzcxjl6D_Bz6sjDAiNg/exec",
-  SHOP_NAME: "Curious Minds Shop",
+  API_URL: "PASTE_YOUR_WEB_APP_URL_HERE",
+  SHOP_NAME: "Your shop name",
   SUPPORT_EMAIL: "info@sandykhippal.com",
   TERMS_URL: "https://www.sandykhippal.com/terms",
   REFUND_URL: "https://www.sandykhippal.com/refund-policy",
@@ -114,7 +114,7 @@ const TYPOS = { 'gmial.com': 'gmail.com', 'gmai.com': 'gmail.com', 'gamil.com': 
 const inr = v => '\u20B9' + Number(v).toLocaleString('en-IN', { maximumFractionDigits: 2 });
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const hue = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
- 
+
 async function api(fn, args) {
   const r = await fetch(CONFIG.API_URL, { method: 'POST', body: JSON.stringify({ fn: fn, args: args }) });
   const j = await r.json();
@@ -123,14 +123,14 @@ async function api(fn, args) {
 }
 function note(t, cls) { const m = $('msg'); m.textContent = t; m.className = cls || ''; if (t) m.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
 const byId = id => S.all.find(p => p.id === id);
- 
+
 function tile(p) {
   const h = hue(p.category), tags = (p.isNew ? '<span class="tag n">New</span>' : '') + (p.best ? '<span class="tag b">Bestseller</span>' : '');
   const art = p.cover ? '<img loading="lazy" alt="" src="' + esc(p.cover) + '">' : '<b style="color:hsl(' + h + ' 45% 30%)">' + esc(p.name.charAt(0).toUpperCase()) + '</b>';
   return '<div class="sq" data-open="' + esc(p.id) + '" style="background:hsl(' + h + ' 55% 91%)">' + art + '<span class="tag">' + (p.type === 'bundle' ? 'Bundle' : 'PDF') + '</span>' + tags + '</div>';
 }
 const addBtn = p => '<button data-add="' + esc(p.id) + '" class="' + (S.cart.includes(p.id) ? '' : 'p') + '">' + (S.cart.includes(p.id) ? 'In cart' : 'Add to cart') + '</button>';
- 
+
 function view() {
   const q = S.q.trim().toLowerCase();
   let r = S.all.filter(p => (S.type === 'all' || p.type === S.type) && (!S.cat || p.category === S.cat) &&
@@ -170,7 +170,7 @@ function route() {
   $('list').hidden = !!p; $('detail').hidden = !p;
   if (p) { renderDetail(p); window.scrollTo(0, 0); } else renderList();
 }
- 
+
 function est() {
   const items = S.cart.map(byId).filter(Boolean), sub = items.reduce((s, p) => s + p.price, 0);
   const pct = items.length >= S.minItems ? S.percent : 0, off = Math.round(sub * pct) / 100;
@@ -195,13 +195,13 @@ async function refreshQuote() {
   renderCart();
 }
 function toggle(id) { const i = S.cart.indexOf(id); if (i > -1) S.cart.splice(i, 1); else S.cart.push(id); renderCart(); route(); refreshQuote(); }
- 
+
 function suggest() {
   const v = $('email').value.trim().toLowerCase(), d = v.split('@')[1], fix = d && TYPOS[d];
   $('sug').innerHTML = fix ? '<div class="warn">Did you mean ' + esc(v.split('@')[0] + '@' + fix) + '? <button data-fix="' + esc(v.split('@')[0] + '@' + fix) + '" style="height:26px;font-size:12px">Yes, fix it</button></div>' : '';
 }
 function pErr(t) { $('perr').innerHTML = t ? '<div class="err">' + esc(t) + '</div>' : ''; }
- 
+
 async function pay() {
   if (S.busy) return;
   const f = { name: $('name').value.trim(), city: $('city').value.trim(), email: $('email').value.trim().toLowerCase(), email2: $('email2').value.trim().toLowerCase() };
@@ -232,7 +232,7 @@ async function pay() {
     rz.open();
   } catch (e) { S.busy = false; $('pay').disabled = false; note(e.message, 'er2'); }
 }
- 
+
 document.addEventListener('click', async e => {
   const t = e.target.closest('[data-add],[data-rm],[data-type],[data-cat],[data-page],[data-open],[data-back],[data-copy],[data-fix],#apply,#pay,#cartBtn,#rs_b,#sb_b,#brand');
   if (!t) return; const d = t.dataset;
@@ -255,7 +255,7 @@ $('q').addEventListener('input', e => { S.q = e.target.value; S.page = 1; render
 $('sort').addEventListener('change', e => { S.sort = e.target.value; S.page = 1; renderList(); });
 $('email').addEventListener('input', suggest);
 window.addEventListener('hashchange', route);
- 
+
 (async function init() {
   document.title = CONFIG.SHOP_NAME; $('brand').textContent = CONFIG.SHOP_NAME;
   $('lt').href = $('fa').href = CONFIG.TERMS_URL; $('lr').href = $('fb').href = CONFIG.REFUND_URL; $('fc').href = CONFIG.PRIVACY_URL;
