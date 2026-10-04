@@ -124,9 +124,17 @@ async function api(fn, args) {
 function note(t, cls) { const m = $('msg'); m.textContent = t; m.className = cls || ''; if (t) m.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
 const byId = id => S.all.find(p => p.id === id);
 
-function tile(p) {
+function coverSrc(v) {
+  v = String(v || '').trim();
+  if (!v) return '';
+  const m = v.match(/\/d\/([\w-]{20,})/) || v.match(/[?&]id=([\w-]{20,})/);
+  if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1080';
+  if (/^[\w-]{20,}$/.test(v)) return 'https://drive.google.com/thumbnail?id=' + v + '&sz=w1080';
+  return v;
+}
+  function tile(p) {
   const h = hue(p.category), tags = (p.isNew ? '<span class="tag n">New</span>' : '') + (p.best ? '<span class="tag b">Bestseller</span>' : '');
-  const art = p.cover ? '<img loading="lazy" alt="" src="' + esc(p.cover) + '">' : '<b style="color:hsl(' + h + ' 45% 30%)">' + esc(p.name.charAt(0).toUpperCase()) + '</b>';
+  const art = coverSrc(p.cover) ? '<img loading="lazy" alt="" src="' + esc(coverSrc(p.cover)) + '">' : '<b style="color:hsl(' + h + ' 45% 30%)">' + esc(p.name.charAt(0).toUpperCase()) + '</b>';
   return '<div class="sq" data-open="' + esc(p.id) + '" style="background:hsl(' + h + ' 55% 91%)">' + art + '<span class="tag">' + (p.type === 'bundle' ? 'Bundle' : 'PDF') + '</span>' + tags + '</div>';
 }
 const addBtn = p => '<button data-add="' + esc(p.id) + '" class="' + (S.cart.includes(p.id) ? '' : 'p') + '">' + (S.cart.includes(p.id) ? 'In cart' : 'Add to cart') + '</button>';
