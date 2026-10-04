@@ -35,7 +35,7 @@ input:focus,select:focus{border-color:var(--blue)}
 input[type=search]{-webkit-appearance:none;appearance:none}
 input[type=checkbox]{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--blue)}
 .hero{background:var(--navy) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 300' preserveAspectRatio='xMaxYMid slice'%3E%3Cpath d='M300 0C420 60 520 160 800 130V0Z' fill='%23001e45'/%3E%3Cpath d='M420 300C520 200 640 150 800 190V300Z' fill='%23003160' opacity='.8'/%3E%3Cpath d='M330 0C450 70 560 170 800 140' fill='none' stroke='%23c9a24d' stroke-width='2' opacity='.9'/%3E%3Cpath d='M365 0C475 80 595 180 800 162' fill='none' stroke='%23c9a24d' stroke-width='1' opacity='.55'/%3E%3Cpath d='M450 300C560 210 670 170 800 205' fill='none' stroke='%23c9a24d' stroke-width='2' opacity='.8'/%3E%3C/svg%3E") right center/cover no-repeat;color:#fff;border-radius:14px;padding:38px 34px;margin:20px 0;border-bottom:4px solid var(--gold)}
-.hero h2{margin:0 0 10px;font-size:28px;line-height:1.25;font-weight:700;max-width:560px}
+.hero h2{margin:0 0 10px;font-size:28px;line-height:1.25;font-weight:700;max-width:700px}.hero h2 span{display:block;text-wrap:balance}
 .hero p{margin:0 0 18px;max-width:520px;color:#d6e0f5}
 .trust{display:flex;gap:8px;flex-wrap:wrap}
 .trust span{border:1px solid var(--gold);color:#f3e3b8;border-radius:999px;padding:5px 14px;font-size:13px;font-weight:600;background:rgba(1,63,163,.45)}
@@ -98,7 +98,7 @@ footer a{color:var(--gold);margin:0 10px;font-weight:700}
 <main class="w">
   <div id="msg" role="status" aria-live="polite"></div>
   <div id="list">
-    <section class="hero"><h2>Premium Printable E-Books — Backed by the Trust of Sandy Khippal</h2><p>Pay once and get your files by email in about a minute. No account needed.</p><div class="trust"><span>Instant email delivery</span><span>Secure checkout</span><span>Print at home</span></div></section>
+    <section class="hero"><h2><span class="l1">Premium Printable E-Books</span><span class="l2">Backed by the Trust of Sandy Khippal</span></h2><p>Pay once and get your files by email in about a minute. No account needed.</p><div class="trust"><span>Instant email delivery</span><span>Secure checkout</span><span>Print at home</span></div></section>
     <div class="bar"><input id="q" type="search" placeholder="Search titles and topics" aria-label="Search"><select id="sort" aria-label="Sort"><option value="feat">Featured</option><option value="new">Newest</option><option value="lo">Price: low to high</option><option value="hi">Price: high to low</option><option value="az">A to Z</option></select></div>
     <div class="tabs" id="tabs"></div><div class="chips" id="chips"></div>
     <div class="mu" id="count"></div>
